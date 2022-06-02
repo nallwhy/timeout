@@ -7,7 +7,7 @@ defmodule TimeoutWeb.Api.TimeoutController do
     Process.sleep(:timer.seconds(timeout))
 
     conn
-    |> json(%{result: :ok})
+    |> json(%{timeout: timeout})
   end
 
   defp ensure_integer(string) when is_binary(string) do

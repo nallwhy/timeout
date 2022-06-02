@@ -20,6 +20,12 @@ defmodule TimeoutWeb.Router do
     get "/", PageController, :index
   end
 
+  scope "/", TimeoutWeb do
+    pipe_through :api
+
+    match :*, "/api", Api.TimeoutController, :any
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", TimeoutWeb do
   #   pipe_through :api

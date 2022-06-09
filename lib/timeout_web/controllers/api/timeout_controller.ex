@@ -1,13 +1,18 @@
 defmodule TimeoutWeb.Api.TimeoutController do
   use TimeoutWeb, :controller
 
-  def any(conn, %{"timeout" => timeout}) do
-    timeout = timeout |> ensure_integer()
+  def any(conn, params) do
+    status = params |> Map.get("status", 200) |> ensure_integer()
+    response = params |> Map.get("response", %{})
+    timeout = params |> Map.get("timeout", 0) |> ensure_float()
 
-    Process.sleep(:timer.seconds(timeout))
+    timeout_ms = (timeout * 1000) |> trunc()
+
+    Process.sleep(timeout_ms)
 
     conn
-    |> json(%{timeout: timeout})
+    |> put_status(status)
+    |> json(response)
   end
 
   defp ensure_integer(string) when is_binary(string) do
@@ -18,5 +23,15 @@ defmodule TimeoutWeb.Api.TimeoutController do
 
   defp ensure_integer(number) when is_number(number) do
     number |> trunc()
+  end
+
+  defp ensure_float(string) when is_binary(string) do
+    {float, _} = string |> Float.parse()
+
+    float
+  end
+
+  defp ensure_float(number) when is_number(number) do
+    number
   end
 end
